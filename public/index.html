@@ -1,97 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Store Manager System</title>
-  <link rel="stylesheet" href="style.css" />
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Redirecting...</title>
+	<script>
+		// Redirect to login or dashboard based on authentication
+		window.addEventListener('load', () => {
+			const token = localStorage.getItem('authToken');
+			if (token) {
+				window.location.href = '/dashboard.html';
+			} else {
+				window.location.href = '/login.html';
+			}
+		});
+	</script>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <h1>🏬 Store Manager System</h1>
-      <p>Comprehensive store and manager information management</p>
-    </div>
-
-    <!-- Search Section -->
-    <div class="search-section">
-      <h3>🔍 Quick Lookup</h3>
-      <div class="search-box">
-        <input type="text" id="storeCode" placeholder="Enter Store Code (e.g., 1341413)" />
-        <button onclick="findStore()">Search</button>
-      </div>
-      <div id="result"></div>
-    </div>
-
-    <!-- Add/Edit Form -->
-    <div class="form-section">
-      <h3>➕ Add New Store</h3>
-      <form id="storeForm" onsubmit="return false;">
-        <div class="form-grid">
-          <div class="form-group">
-            <label>Store Code *</label>
-            <input type="text" id="crudCode" placeholder="e.g., 1341413" pattern="[0-9]+" title="Numbers only" />
-            <span class="error-msg" id="codeError"></span>
-          </div>
-          
-          <div class="form-group">
-            <label>Manager Designation *</label>
-            <select id="crudDesignation">
-              <option value="">Select...</option>
-              <option value="Mr">Mr</option>
-              <option value="Mrs">Mrs</option>
-              <option value="Miss">Miss</option>
-              <option value="Dr">Dr</option>
-              <option value="Ms">Ms</option>
-            </select>
-          </div>
-          
-          <div class="form-group">
-            <label>Manager Name *</label>
-            <input type="text" id="crudManager" placeholder="e.g., John Doe" pattern="[A-Za-z\s]+" title="Alphabets only" />
-            <span class="error-msg" id="managerError"></span>
-          </div>
-          
-          <div class="form-group">
-            <label>Email *</label>
-            <input type="email" id="crudEmail" placeholder="manager@example.com" />
-            <span class="error-msg" id="emailError"></span>
-          </div>
-          
-          <div class="form-group">
-            <label>Mobile Number *</label>
-            <input type="tel" id="crudMobile" placeholder="1234567890" pattern="[0-9]{10}" maxlength="10" title="10 digit number" />
-            <span class="error-msg" id="mobileError"></span>
-          </div>
-        </div>
-        
-        <div class="form-group">
-          <label>Store Type *</label>
-          <div class="radio-group">
-            <label>
-              <input type="radio" name="storeType" value="store" checked />
-              Store
-            </label>
-            <label>
-              <input type="radio" name="storeType" value="branch" />
-              Branch
-            </label>
-          </div>
-        </div>
-
-        <div class="form-actions">
-          <button type="button" class="btn btn-primary" onclick="addStore()">Add Store</button>
-        </div>
-      </form>
-    </div>
-
-    <!-- Stores List -->
-    <div class="stores-list">
-      <h3 style="align-items: center;">📋 All Stores</h3>
-      <ul id="storeList"></ul>
-    </div>
-  </div>
-
-  <script src="script.js"></script>
+	<p>Redirecting...</p>
 </body>
 </html>

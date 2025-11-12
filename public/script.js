@@ -4,6 +4,24 @@ const apiBase = "/api/stores";
 console.log('✅ script.js loaded');
 console.log('📍 API Base:', apiBase);
 
+// Helper function to include auth token in API calls
+async function apiCall(url, options = {}) {
+	const token = localStorage.getItem('authToken');
+	const headers = {
+		'Content-Type': 'application/json',
+		...options.headers,
+	};
+
+	if (token) {
+		headers.Authorization = `Bearer ${token}`;
+	}
+
+	return fetch(url, {
+		...options,
+		headers,
+	});
+}
+
 // ==================== VALIDATION FUNCTIONS ====================
 
 function validateCode(code) {
@@ -77,7 +95,7 @@ async function findStore() {
 
   try {
     console.log('🔍 Searching for store:', code);
-    const res = await fetch(`${apiBase}/${code}`);
+    const res = await apiCall(`${apiBase}/${code}`);
     const data = await res.json();
     
     if (data.success) {
@@ -118,7 +136,7 @@ async function addStore() {
   console.log('📦 Store data:', storeData);
 
   try {
-    const res = await fetch(apiBase, {
+    const res = await apiCall(apiBase, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(storeData),
@@ -155,7 +173,7 @@ async function loadStores() {
   
   try {
     console.log('📊 Loading all stores...');
-    const res = await fetch(apiBase);
+    const res = await apiCall(apiBase);
     const stores = await res.json();
 
     console.log('📦 Stores received:', stores.length);
@@ -309,7 +327,7 @@ async function updateStore(code, li) {
   console.log('📦 Update data:', updateData);
 
   try {
-    const res = await fetch(`${apiBase}/${code}`, {
+    const res = await apiCall(`${apiBase}/${code}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(updateData),
@@ -331,7 +349,7 @@ async function deleteStore(code) {
   console.log('🗑️ Attempting to delete store:', code);
 
   try {
-    const res = await fetch(`${apiBase}/${code}`, { method: "DELETE" });
+    const res = await apiCall(`${apiBase}/${code}`, { method: "DELETE" });
     const data = await res.json();
     
     console.log('📨 Response:', data);

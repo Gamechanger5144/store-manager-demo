@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Event Logs - Store Manager</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body { padding: 20px; font-family: Arial, sans-serif; }
+    .controls { display:flex; gap:10px; margin-bottom:10px; align-items:center }
+    table { width:100%; border-collapse:collapse }
+    th,td { padding:8px; border:1px solid #ddd }
+  </style>
+</head>
+<body>
+  <h1>Event Logs</h1>
+  <div class="controls">
+    <input id="filterEmail" placeholder="Filter by email" />
+    <input id="filterEvent" placeholder="Filter by event text" />
+    <label>From: <input type="date" id="fromDate" /></label>
+    <label>To: <input type="date" id="toDate" /></label>
+    <button onclick="applyFilter()">Filter</button>
+    <button onclick="exportCSV()">Export CSV</button>
+    <button onclick="goBack()">Back</button>
+  </div>
+
+  <table>
+    <thead>
+      <tr><th>ID</th><th>Email</th><th>Event</th><th>Time</th></tr>
+    </thead>
+    <tbody id="logsBody"><tr><td colspan="4">Loading...</td></tr></tbody>
+  </table>
+
+  <div style="margin-top:10px; display:flex; gap:8px; align-items:center;">
+    <button id="prevBtn" onclick="prevPage()">Prev</button>
+    <span>Page <span id="pageNum">1</span></span>
+    <button id="nextBtn" onclick="nextPage()">Next</button>
+    <label style="margin-left:8px">Per page:
+      <select id="pageSize" onchange="changePageSize()">
+        <option value="10">10</option>
+        <option value="25">25</option>
+        <option value="50">50</option>
+      </select>
+    </label>
+  </div>
+
+  <script>
+    function goBack(){ window.location.href='/dashboard.html'; }
+    async function apiCall(url, options = {}){
+      const token = localStorage.getItem('authToken');
+      const headers = { 'Content-Type':'application/json', ...(options.headers||{}) };
+      if (token) headers.Authorization = `Bearer ${token}`;
+      const res = await fetch(url, { ...options, headers });
+      return res;
+    }
+
+    let currentPage = 1;
+    let currentPageSize = parseInt(document.getElementById('pageSize').value, 10);
+
+    function applyFilter(){ currentPage = 1; loadLogs(); }
+
+    function changePageSize(){ currentPageSize = parseInt(document.getElementById('pageSize').value, 10); currentPage = 1; loadLogs(); }
+
+    function prevPage(){ if (currentPage > 1) { currentPage--; loadLogs(); } }
+    function nextPage(){ currentPage++; loadLogs(); }
+
+    async function loadLogs(){
+      const email = document.getElementById('filterEmail').value;
+      const event = document.getElementById('filterEvent').value;
+      const from = document.getElementById('fromDate').value;
+      const to = document.getElementById('toDate').value;
+      const offset = (currentPage - 1) * currentPageSize;
+
+      const qs = new URLSearchParams();
+      qs.set('limit', currentPageSize);
+      qs.set('offset', offset);
+      if(email) qs.set('email', email);
+      if(event) qs.set('event', event);
+      if(from) qs.set('from', from + ' 00:00:00');
+      if(to) qs.set('to', to + ' 23:59:59');
+
+      const res = await apiCall('/api/events?'+qs.toString());
+      if(!res.ok){ const data = await res.json(); alert(data.error||'Failed to load'); return }
+      const data = await res.json();
+      const tbody = document.getElementById('logsBody');
+      tbody.innerHTML = '';
+      if(data.events.length===0){ tbody.innerHTML = '<tr><td colspan="4">No logs found</td></tr>'; document.getElementById('pageNum').textContent = currentPage; return }
+      data.events.forEach(r=>{
+        const tr = `<tr><td>${r.id}</td><td>${r.email}</td><td>${r.event}</td><td>${r.event_time}</td></tr>`;
+        tbody.innerHTML += tr;
+      });
+      document.getElementById('pageNum').textContent = currentPage;
+    }
+
+    function exportCSV(){
+      const email = document.getElementById('filterEmail').value;
+      const event = document.getElementById('filterEvent').value;
+      const from = document.getElementById('fromDate').value;
+      const to = document.getElementById('toDate').value;
+      const qs = new URLSearchParams();
+      if(email) qs.set('email', email);
+      if(event) qs.set('event', event);
+      if(from) qs.set('from', from + ' 00:00:00');
+      if(to) qs.set('to', to + ' 23:59:59');
+      const token = localStorage.getItem('authToken');
+      fetch('/api/events/export?'+qs.toString(), { headers: { Authorization: `Bearer ${token}` } })
+        .then(r=>{
+          if(!r.ok) return r.json().then(j=>{ throw new Error(j.error || 'Export failed') });
+          return r.blob();
+        })
+        .then(blob=>{
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a'); a.href = url; a.download = 'events.csv'; document.body.appendChild(a); a.click(); a.remove();
+        })
+        .catch(err=> alert(err.message));
+    }
+
+    // initial load
+    loadLogs();
+  </script>
+</body>
+</html>
