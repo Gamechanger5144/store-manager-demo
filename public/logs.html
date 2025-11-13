@@ -45,7 +45,7 @@
   </div>
 
   <script>
-    function goBack(){ window.location.href='/dashboard.html'; }
+  function goBack(){ window.location.href='/storeDashboard.html'; }
     async function apiCall(url, options = {}){
       const token = localStorage.getItem('authToken');
       const headers = { 'Content-Type':'application/json', ...(options.headers||{}) };

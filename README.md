@@ -97,7 +97,7 @@ Note: If you want to run without a port in the URL (bind to port 80) you'll need
 Frontend pages (under `public/`):
 
 - `login.html` — login page
-- `dashboard.html` — main dashboard and bulk import UI
+- `storeDashboard.html` — main dashboard and bulk import UI
 - `users.html` — user management UI
 - `logs.html` — logs viewer (admin/main)
 

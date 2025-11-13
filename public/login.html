@@ -211,9 +211,9 @@
 				successMessage.textContent = 'Login successful! Redirecting...';
 				successMessage.classList.add('show');
 
-				// Redirect to dashboard
+				// Redirect to store dashboard
 				setTimeout(() => {
-					window.location.href = '/dashboard.html';
+					window.location.href = '/storeDashboard.html';
 				}, 1000);
 			} catch (err) {
 				errorMessage.textContent = err.message || 'An error occurred. Please try again.';
@@ -223,10 +223,10 @@
 			}
 		});
 
-		// Redirect to dashboard if already logged in
+		// Redirect to store dashboard if already logged in
 		window.addEventListener('load', () => {
 			if (localStorage.getItem('authToken')) {
-				window.location.href = '/dashboard.html';
+				window.location.href = '/storeDashboard.html';
 			}
 		});
 	</script>

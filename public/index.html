@@ -5,11 +5,11 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>Redirecting...</title>
 	<script>
-		// Redirect to login or dashboard based on authentication
+		// Redirect to login or store dashboard based on authentication
 		window.addEventListener('load', () => {
 			const token = localStorage.getItem('authToken');
 			if (token) {
-				window.location.href = '/dashboard.html';
+				window.location.href = '/storeDashboard.html';
 			} else {
 				window.location.href = '/login.html';
 			}
